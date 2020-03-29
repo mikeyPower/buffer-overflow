@@ -53,7 +53,7 @@ Use compilers, which are able to identify unsafe functions, logic errors and che
 
 In order to compile this program run the below line
 
-    gcc -Wall -fno-stack-protector buffer_overflow.c -o buffer_overflow
+    gcc -Wall -g -fno-stack-protector buffer_overflow.c -o buffer_overflow
     
 You may notice that this line contains a flag
     
@@ -66,7 +66,63 @@ Now once we've compiled our code we can run the output
 
     ./buffer_overflow
 
+
 ## Results
+
+We will then be presented with a screen to input our password and depending on what we input the output will either give us root privileges or deny this.
+
+    Enter the password : 
+    fdsfds
+
+    Wrong Password 
+
+This seems like our program is working correctly however if we enter a slightly longer password see what happens
+
+    Enter the password : 
+    aaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+
+    Wrong Password 
+
+    Root privileges given to the user 
+    
+Hold on why did the program give root privileges to an incorrect password to understand this we have to enter the memory of our c program.
+
+    root@kali:~/buffer-overflow# gdb buffer_overflow 
+    (gdb) list
+    3       #include <signal.h>
+    4
+    5       int main(void)
+    6       {
+    7           char buff[15];
+    8           int pass = 0;
+    9
+    10          printf("\n Enter the password : \n");
+    11          gets(buff);
+    12
+    
+Here we are interested in the variable pass which is set to one, now in order to find the memory location of where this is stored
+we can execute the following command
+   
+    (gdb) break 8
+    Breakpoint 1 at 0x116d: file buffer_overflow.c, line 8.
+    
+This will set up a breakpoint at line 8 so that we can see the memory location of this variable once we run the program
+
+    (gdb) run buffer_overflow
+    Starting program: /root/buffer-overflow/buffer_overflow buffer_overflow
+
+    Breakpoint 1, main () at buffer_overflow.c:8
+    8           int pass = 0;
+    (gdb) p &pass
+    $1 = (int *) 0x7fffffffe13c
+    
+    
+Now we know the memory location of the variable pass lets finish the running of this programe
+
+
+
+
+
 
 ## Reference
 
