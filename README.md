@@ -173,11 +173,7 @@ It worked and if we inspect the memory of our programme now we can see that the 
     0x7fffffffe13c: "a"
 
 
-    
-
-
-
-
+This is because the array "buf" which is limited to 15, since we gave it an input of 16 the extra character a ran over and into the pass variable thus now "pass" contains the value of "a". 
 
 
 ## Reference
