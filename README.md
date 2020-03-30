@@ -1,13 +1,13 @@
 # buffer-overflow
 
 ## Table of Contents
-1. [Overview](https://github.com/mikeyPower/buffer-overflow/overview)
-2. [What is a BUffer](https://github.com/mikeyPower/buffer-overflow/what-is-a-buffer)
-3. [Why are Buffer Overflows harmful](https://github.com/mikeyPower/buffer-overflow/why-are-buffer-overflows-harmful)
-4. [Protect against Buffer Overflow](https://github.com/mikeyPower/buffer-overflow/protect-against-buffer-overflow)
-5. [Running](https://github.com/mikeyPower/buffer-overflow/running)
-6. [Results](https://github.com/mikeyPower/buffer-overflow/results)
-7. [References](https://github.com/mikeyPower/buffer-overflow/references)
+1. [Overview](#overview)
+2. [What is a BUffer](#what-is-a-buffer)
+3. [Why are Buffer Overflows harmful](#why-are-buffer-overflows-harmful)
+4. [Protect against Buffer Overflow](#protect-against-buffer-overflow)
+5. [Running](#running)
+6. [Results](#results)
+7. [References](#references)
 
 ## Overview
 
