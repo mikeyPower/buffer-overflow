@@ -2,7 +2,7 @@
 
 ## Overview
 
-Buffer overflow errors are characterized by the overwriting of adjacent memory locations of the process, which should have never been modified intentionally or unintentionally. Overwriting values of the IP (Instruction Pointer), BP (Base Pointer) and other registers causes exceptions, segmentation faults, and other errors to occur. Usually these errors end execution of the application in an unexpected way. Buffer overflow errors occur when we operate on buffers of char type.
+Buffer overflow errors are characterized by the overwriting of adjacent memory locations, which should have never been modified intentionally or unintentionally. Overwriting values of the IP (Instruction Pointer), BP (Base Pointer) and other registers causes exceptions, segmentation faults, and other errors to occur. Usually these errors end execution of the application in an unexpected way. Buffer overflow errors occur when we operate on buffers of char type.
 
 Buffer overflows can consist of overflowing the stack (Stack overflow) or overflowing the heap (Heap overflow).
 
@@ -24,30 +24,25 @@ Generally, exploitation of these errors may lead to:
 application DoS
 reordering execution of functions
 code execution (if we are able to inject the shellcode, described in the separate document)
-How are buffer overflow errors are made?
-
 
 ## Protect against buffer overflow
+
 These kinds of errors are very easy to make. For years they were a programmer’s nightmare. The problem lies in native C functions, which don’t care about doing appropriate buffer length checks. Below is the list of such functions and, if they exist, their safe equivalents:
 
-gets() -> fgets() - read characters
-strcpy() -> strncpy() - copy content of the buffer
-strcat() -> strncat() - buffer concatenation
-sprintf() -> snprintf() - fill buffer with data of different types
-(f)scanf() - read from STDIN
-getwd() - return working directory
-realpath() - return absolute (full) path
-Use safe equivalent functions, which check the buffers length, whenever it’s possible. Namely:
-
-gets() -> fgets()
-strcpy() -> strncpy()
-strcat() -> strncat()
-sprintf() -> snprintf()
+    gets() -> fgets() - read characters
+    strcpy() -> strncpy() - copy content of the buffer
+    strcat() -> strncat() - buffer concatenation
+    sprintf() -> snprintf() - fill buffer with data of different types
+    (f)scanf() - read from STDIN
+    getwd() - return working directory
+    realpath() - return absolute (full) path
+    
+Use safe equivalent functions, which check the buffers length, whenever it’s possible.
 Those functions which don’t have safe equivalents should be rewritten with safe checks implemented. Time spent on that will benefit in the future. Remember that you have to do it only once.
 
 There are many functions that do the exact same thing—these are known as unbounded functions because developers cannot predict when they will stop reading from or writing to memory. Microsoft even has a web page documenting what it calls “banned” functions, which includes these unbounded functions.
 
-Use compilers, which are able to identify unsafe functions, logic errors and check if the memory is overwritten when and where it shouldn’t be.
+We can also use compilers, which are able to identify unsafe functions, logic errors and check if the memory is overwritten when and where it shouldn’t be.
 
 ## Running 
 
@@ -59,10 +54,9 @@ You may notice that this line contains a flag
     
     -fno-stack-protector
     
-This flag emits extra code to check for buffer overflows, such as stack smashing attacks. If we were to compile the exploit without the
-flag, the gcc compiler would in most cases be able to prevent the buffer over.
+This flag emits extra code to check for buffer overflows, such as stack smashing attacks. If we were to compile the exploit without the flag the gcc compiler would in most cases be able to prevent the buffer over.
 
-Now once we've compiled our code we can run the output
+Now once we've compiled our code we can run the output as follows.
 
     ./buffer_overflow
 
@@ -85,7 +79,7 @@ This seems like our program is working correctly however if we enter a slightly 
 
     Root privileges given to the user 
     
-Hold on why did the program give root privileges to an incorrect password to understand this we have to enter the memory of our c program.
+Hold on why did the program give root privileges to an incorrect password? To understand this we have to inspect the memory of our c program.
 
     root@kali:~/buffer-overflow# gdb buffer_overflow 
     (gdb) list
@@ -100,13 +94,12 @@ Hold on why did the program give root privileges to an incorrect password to und
     11          gets(buff);
     12
     
-Here we are interested in the variable pass which is set to one, now in order to find the memory location of where this is stored
-we can execute the following command
+Here we are interested in the variable "pass" which is set to one, now in order to find the memory location of where this is stored we can execute the following command.
    
     (gdb) break 8
     Breakpoint 1 at 0x116d: file buffer_overflow.c, line 8.
     
-This will set up a breakpoint at line 8 so that we can see the memory location of this variable once we run the program
+This will set up a breakpoint at line 8 so that we can see the memory location of this variable once we run the programme.
 
     (gdb) run buffer_overflow
     Starting program: /root/buffer-overflow/buffer_overflow buffer_overflow
@@ -117,7 +110,7 @@ This will set up a breakpoint at line 8 so that we can see the memory location o
     $1 = (int *) 0x7fffffffe13c
     
     
-Now we know the memory location of the variable pass lets finish the running of this programe
+Now we know the memory location of the variable pass lets finish the execution of this programme.
 
     (gdb) continue
     Continuing.
@@ -130,6 +123,9 @@ Now we know the memory location of the variable pass lets finish the running of 
     Program received signal SIGINT, Interrupt.
     __GI_raise (sig=<optimized out>) at ../sysdeps/unix/sysv/linux/raise.c:50
     50      ../sysdeps/unix/sysv/linux/raise.c: No such file or directory.
+    
+We have come to the end of the programme and would now like to deep dive into the memory of this programme to further understand what is being stored.
+
     (gdb) info frame
     Stack level 0, frame at 0x7fffffffe120:
     rip = 0x7ffff7e30761 in __GI_raise (../sysdeps/unix/sysv/linux/raise.c:50); saved rip = 0x5555555551e5
@@ -145,8 +141,7 @@ Now we know the memory location of the variable pass lets finish the running of 
     0x7fffffffe138: 0x00000000      0x00000000      0x555551f0      0x00005555
     .....
 
-
-After entering a series of a's (11 in face) we can se this represented between the two memory location as 61 in hex, let's keep increasing this in order to corrupt the value stored at our pass variable. Or an easier solution would be to subtract the two memory locations of the buff array and pass variable.
+After entering a series of a's (11 in fact) we can se this represented between the two memory location as 0x61 in hex, let's keep increasing this in order to corrupt the value stored at our pass variable. Or an easier solution would be to subtract the two memory locations of the buff array and pass variable to determine how many bytes we need to overwrite.
 
     (gdb) p &buff
     $8 = (char (*)[15]) 0x7fffffffe12d
@@ -154,7 +149,7 @@ After entering a series of a's (11 in face) we can se this represented between t
     $9 = (int *) 0x7fffffffe13c
     0x7fffffffe13c - 0x7fffffffe12d = F
     
-The difference between the two locations is 15 bytes or F in Hexadecimal. So in order to change the value of pass we need to enter a input of at least 16 to change the value of pass in order to give us root privileges.
+The difference between the two locations is 15 bytes or F in Hexadecimal. So in order to change the value of pass we need to enter a input of at least 16 inorder to change its value to give us root privileges.
 
     Enter the password : 
     aaaaaaaaaaaaaaa
@@ -173,7 +168,7 @@ It worked and if we inspect the memory of our programme now we can see that the 
     0x7fffffffe13c: "a"
 
 
-This is because the array "buf" which is limited to 15, since we gave it an input of 16 the extra character a ran over and into the pass variable thus now "pass" contains the value of "a". 
+This is because the array "buf" which is limited to 15, since we have given it an input of 16 the extra character "a" ran over and is now stored at the memory location of pass. 
 
 
 ## Reference
