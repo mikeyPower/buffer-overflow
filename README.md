@@ -1,5 +1,14 @@
 # buffer-overflow
 
+## Table of Contents
+1. [Overview](https://github.com/mikeyPower/buffer-overflow/overview)
+2. [What is a BUffer](https://github.com/mikeyPower/buffer-overflow/what-is-a-buffer)
+3. [Why are Buffer Overflows harmful](https://github.com/mikeyPower/buffer-overflow/why-are-buffer-overflows-harmful)
+4. [Protect against Buffer Overflow](https://github.com/mikeyPower/buffer-overflow/protect-against-buffer-overflow)
+5. [Running](https://github.com/mikeyPower/buffer-overflow/running)
+6. [Results](https://github.com/mikeyPower/buffer-overflow/results)
+7. [References](https://github.com/mikeyPower/buffer-overflow/references)
+
 ## Overview
 
 Buffer overflow errors are characterized by the overwriting of adjacent memory locations, which should have never been modified intentionally or unintentionally. Overwriting values of the IP (Instruction Pointer), BP (Base Pointer) and other registers causes exceptions, segmentation faults, and other errors to occur. Usually these errors end execution of the application in an unexpected way. Buffer overflow errors occur when we operate on buffers of char type.
@@ -17,7 +26,7 @@ For example :
 In the above example, ‘buff’ represents an array of 10 bytes where buff[0] is the left boundary and buff[9] is the right boundary of the buffer.
 
 
-## Why are buffer overflows harmful
+## Why are Buffer Overflows harmful
 
 Generally, exploitation of these errors may lead to:
 
@@ -25,7 +34,7 @@ application DoS
 reordering execution of functions
 code execution (if we are able to inject the shellcode, described in the separate document)
 
-## Protect against buffer overflow
+## Protect against Buffer Overflow
 
 These kinds of errors are very easy to make. For years they were a programmer’s nightmare. The problem lies in native C functions, which don’t care about doing appropriate buffer length checks. Below is the list of such functions and, if they exist, their safe equivalents:
 
@@ -171,7 +180,7 @@ It worked and if we inspect the memory of our programme now we can see that the 
 This is because the array "buf" which is limited to 15, since we have given it an input of 16 the extra character "a" ran over and is now stored at the memory location of pass. 
 
 
-## Reference
+## References
 
 1. https://www.thegeekstuff.com/2013/06/buffer-overflow/
 2. https://blog.rapid7.com/2019/02/19/stack-based-buffer-overflow-attacks-what-you-need-to-know/
